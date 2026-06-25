@@ -1,2555 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio - Web Dev & Security</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Courier New", monospace;
-        overflow-x: hidden;
-        background: #f5f5dc;
-        transition: background 0.8s ease;
-      }
-
-      body.dark-mode {
-        background: #0a0a0a;
-      }
-
-      .section {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 40px 20px;
-        position: relative;
-      }
-
-      /* Pixel Grid Background */
-      .pixel-grid {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: linear-gradient(
-            rgba(0, 0, 0, 0.03) 1px,
-            transparent 1px
-          ),
-          linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-        background-size: 20px 20px;
-        pointer-events: none;
-        z-index: 0;
-        transition: opacity 0.8s ease;
-      }
-
-      body.dark-mode .pixel-grid {
-        background-image: linear-gradient(
-            rgba(0, 255, 255, 0.1) 1px,
-            transparent 1px
-          ),
-          linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-      }
-
-      .container {
-        max-width: 1200px;
-        width: 100%;
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Pixel Art Header */
-      .pixel-header {
-        text-align: center;
-        margin-bottom: 60px;
-        animation: fadeInDown 1s ease;
-      }
-
-      .pixel-title {
-        font-size: 48px;
-        color: #333;
-        text-shadow: 4px 4px 0px #ccc, 8px 8px 0px #999;
-        letter-spacing: 4px;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .pixel-title {
-        color: #0ff;
-        text-shadow: 4px 4px 0px #0aa, 8px 8px 0px #077, 0 0 20px #0ff;
-      }
-
-      .pixel-subtitle {
-        font-size: 20px;
-        color: #666;
-        margin-top: 20px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .pixel-subtitle {
-        color: #0aa;
-      }
-
-      /* Navigation */
-      .nav {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      .nav-btn {
-        background: #333;
-        color: #fff;
-        border: 3px solid #333;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-family: "Courier New", monospace;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        box-shadow: 4px 4px 0px #666;
-      }
-
-      .nav-btn:hover {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0px #666;
-      }
-
-      body.dark-mode .nav-btn {
-        background: #0a0a0a;
-        border-color: #0ff;
-        color: #0ff;
-        box-shadow: 4px 4px 0px #0aa, 0 0 10px #0ff;
-      }
-
-      /* Project Cards */
-      .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        margin-top: 40px;
-      }
-
-      .project-card {
-        background: #fff;
-        border: 4px solid #333;
-        padding: 30px;
-        box-shadow: 8px 8px 0px #ccc;
-        transition: all 0.3s ease;
-        animation: fadeInUp 0.6s ease;
-        cursor: pointer;
-      }
-
-      .project-card:hover {
-        transform: translate(-4px, -4px);
-        box-shadow: 12px 12px 0px #ccc;
-      }
-
-      body.dark-mode .project-card {
-        background: #111;
-        border-color: #0ff;
-        box-shadow: 8px 8px 0px #0aa, 0 0 20px rgba(0, 255, 255, 0.2);
-      }
-
-      body.dark-mode .project-card:hover {
-        box-shadow: 12px 12px 0px #0aa, 0 0 30px rgba(0, 255, 255, 0.4);
-      }
-
-      .project-icon {
-        font-size: 48px;
-        margin-bottom: 20px;
-      }
-
-      .project-title {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 15px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .project-title {
-        color: #0ff;
-      }
-
-      .project-desc {
-        color: #666;
-        line-height: 1.6;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .project-desc {
-        color: #0aa;
-      }
-
-      .tech-tags {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 15px;
-      }
-
-      .tech-tag {
-        background: #333;
-        color: #fff;
-        padding: 5px 12px;
-        font-size: 12px;
-        border: 2px solid #333;
-      }
-
-      body.dark-mode .tech-tag {
-        background: #0a0a0a;
-        border-color: #0aa;
-        color: #0aa;
-      }
-
-      /* About Section */
-      .about-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 60px;
-        align-items: center;
-        margin-top: 40px;
-      }
-
-      .about-text {
-        font-size: 18px;
-        line-height: 1.8;
-        color: #333;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .about-text {
-        color: #0aa;
-      }
-
-      .about-text p {
-        margin-bottom: 20px;
-      }
-
-      .skills-container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .skill-group {
-        background: #fff;
-        border: 4px solid #333;
-        padding: 20px;
-        box-shadow: 6px 6px 0px #ccc;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .skill-group {
-        background: #111;
-        border-color: #0ff;
-        box-shadow: 6px 6px 0px #0aa;
-      }
-
-      .skill-label {
-        color: #333;
-        font-weight: bold;
-        margin-bottom: 10px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .skill-label {
-        color: #0ff;
-      }
-
-      .skill-items {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .skill-item {
-        background: #333;
-        color: #fff;
-        padding: 8px 15px;
-        font-size: 13px;
-        border: 2px solid #333;
-        transition: all 0.3s ease;
-      }
-
-      body.dark-mode .skill-item {
-        background: #0a0a0a;
-        border-color: #0ff;
-        color: #0ff;
-      }
-
-      /* CTF Experience Cards */
-      .ctf-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        margin-top: 40px;
-      }
-
-      .ctf-card {
-        background: #fff;
-        border: 4px solid #9b59b6;
-        padding: 30px;
-        box-shadow: 8px 8px 0px rgba(155, 89, 182, 0.3);
-        transition: all 0.8s ease;
-        animation: fadeInUp 0.6s ease;
-      }
-
-      body.dark-mode .ctf-card {
-        background: #0a0a0a;
-        border-color: #d946ef;
-        box-shadow: 8px 8px 0px rgba(217, 70, 239, 0.3),
-          0 0 20px rgba(217, 70, 239, 0.1);
-      }
-
-      .ctf-icon {
-        font-size: 48px;
-        margin-bottom: 20px;
-      }
-
-      .ctf-title {
-        font-size: 22px;
-        color: #9b59b6;
-        margin-bottom: 15px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .ctf-title {
-        color: #d946ef;
-        text-shadow: 0 0 10px #d946ef;
-      }
-
-      .ctf-year {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 15px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .ctf-year {
-        color: #999;
-      }
-
-      .ctf-desc {
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 15px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .ctf-desc {
-        color: #aaa;
-      }
-
-      .ctf-role {
-        background: #9b59b6;
-        color: #fff;
-        padding: 8px 15px;
-        font-size: 12px;
-        display: inline-block;
-        border-radius: 3px;
-      }
-
-      body.dark-mode .ctf-role {
-        background: #d946ef;
-      }
-
-      /* Security Section */
-      .security-intro {
-        text-align: center;
-        margin-bottom: 60px;
-        animation: fadeIn 1s ease;
-      }
-
-      .warning-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
-        animation: pulse 2s infinite;
-      }
-
-      body.dark-mode .warning-icon {
-        filter: drop-shadow(0 0 20px #0ff);
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
-        margin-top: 40px;
-      }
-
-      .stat-card {
-        background: #fff;
-        border: 4px solid #333;
-        padding: 30px;
-        text-align: center;
-        box-shadow: 8px 8px 0px #ccc;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .stat-card {
-        background: #111;
-        border-color: #f0f;
-        box-shadow: 8px 8px 0px #a0a, 0 0 20px rgba(255, 0, 255, 0.2);
-      }
-
-      .stat-number {
-        font-size: 48px;
-        color: #e74c3c;
-        font-weight: bold;
-        margin-bottom: 10px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .stat-number {
-        color: #f0f;
-        text-shadow: 0 0 20px #f0f;
-      }
-
-      .stat-label {
-        color: #666;
-        font-size: 16px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .stat-label {
-        color: #a0a;
-      }
-
-      /* AI Impact Section */
-      .ai-warning {
-        background: linear-gradient(
-          135deg,
-          #fff 25%,
-          #f9f9f9 25%,
-          #f9f9f9 50%,
-          #fff 50%,
-          #fff 75%,
-          #f9f9f9 75%
-        );
-        background-size: 40px 40px;
-        border: 4px solid #e74c3c;
-        padding: 40px;
-        margin: 40px 0;
-        box-shadow: 8px 8px 0px rgba(231, 76, 60, 0.3);
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .ai-warning {
-        background: linear-gradient(
-          135deg,
-          #1a0a0a 25%,
-          #150808 25%,
-          #150808 50%,
-          #1a0a0a 50%,
-          #1a0a0a 75%,
-          #150808 75%
-        );
-        background-size: 40px 40px;
-        border-color: #f0f;
-        box-shadow: 8px 8px 0px rgba(255, 0, 255, 0.3),
-          0 0 30px rgba(255, 0, 255, 0.2);
-      }
-
-      .vulnerability-list {
-        margin-top: 30px;
-      }
-
-      .vulnerability-item {
-        background: #fff;
-        border-left: 6px solid #e74c3c;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .vulnerability-item {
-        background: #0a0a0a;
-        border-left-color: #f0f;
-        box-shadow: 4px 4px 0px rgba(255, 0, 255, 0.2);
-      }
-
-      .vuln-title {
-        font-size: 18px;
-        color: #e74c3c;
-        margin-bottom: 10px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .vuln-title {
-        color: #f0f;
-      }
-
-      .vuln-desc {
-        color: #666;
-        line-height: 1.6;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .vuln-desc {
-        color: #999;
-      }
-
-      /* Solutions Section */
-      .solutions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
-        margin-top: 40px;
-        width: 100%;
-      }
-
-      .solution-card {
-        background: #fff;
-        border: 4px solid #27ae60;
-        padding: 30px;
-        box-shadow: 8px 8px 0px rgba(39, 174, 96, 0.3);
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .solution-card {
-        background: #0a0a0a;
-        border-color: #0f0;
-        box-shadow: 8px 8px 0px rgba(0, 255, 0, 0.3),
-          0 0 20px rgba(0, 255, 0, 0.1);
-      }
-
-      .solution-icon {
-        font-size: 40px;
-        margin-bottom: 15px;
-      }
-
-      .solution-title {
-        font-size: 20px;
-        color: #27ae60;
-        margin-bottom: 15px;
-        transition: color 0.8s ease;
-        min-height: 50px;
-      }
-
-      body.dark-mode .solution-title {
-        color: #0f0;
-        text-shadow: 0 0 10px #0f0;
-      }
-
-      /* CTA Section */
-      .cta-section {
-        text-align: center;
-        margin-top: 60px;
-        padding: 60px 40px;
-        background: #333;
-        border: 4px solid #333;
-        box-shadow: 12px 12px 0px #666;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .cta-section {
-        background: #0a0a0a;
-        border-color: #0ff;
-        box-shadow: 12px 12px 0px #0aa, 0 0 40px rgba(0, 255, 255, 0.3);
-      }
-
-      .cta-title {
-        font-size: 36px;
-        color: #fff;
-        margin-bottom: 20px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .cta-title {
-        color: #0ff;
-        text-shadow: 0 0 20px #0ff;
-      }
-
-      .cta-btn {
-        background: #fff;
-        color: #333;
-        border: 4px solid #fff;
-        padding: 15px 40px;
-        font-size: 18px;
-        cursor: pointer;
-        font-family: "Courier New", monospace;
-        margin-top: 20px;
-        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-      }
-
-      .cta-btn:hover {
-        transform: translate(3px, 3px);
-        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
-      }
-
-      body.dark-mode .cta-btn {
-        background: #0ff;
-        color: #0a0a0a;
-        border-color: #0ff;
-        box-shadow: 6px 6px 0px #0aa, 0 0 20px #0ff;
-      }
-
-      /* Modal for project details */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 2000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-        animation: fadeIn 0.3s ease;
-      }
-
-      .modal-content {
-        background-color: #fff;
-        margin: 5% auto;
-        padding: 40px;
-        border: 4px solid #333;
-        box-shadow: 12px 12px 0px #ccc;
-        width: 90%;
-        max-width: 900px;
-        max-height: 85vh;
-        overflow-y: auto;
-        animation: slideIn 0.3s ease;
-      }
-
-      body.dark-mode .modal-content {
-        background-color: #111;
-        border-color: #0ff;
-        box-shadow: 12px 12px 0px #0aa, 0 0 30px rgba(0, 255, 255, 0.2);
-      }
-
-      .close-btn {
-        color: #333;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
-
-      body.dark-mode .close-btn {
-        color: #0ff;
-      }
-
-      .close-btn:hover {
-        color: #e74c3c;
-      }
-
-      .modal-title {
-        font-size: 36px;
-        color: #333;
-        margin-bottom: 20px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .modal-title {
-        color: #0ff;
-      }
-
-      .modal-section {
-        margin-bottom: 30px;
-      }
-
-      .modal-section-title {
-        font-size: 22px;
-        color: #333;
-        margin-bottom: 15px;
-        border-bottom: 3px solid #333;
-        padding-bottom: 10px;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .modal-section-title {
-        color: #0ff;
-        border-bottom-color: #0aa;
-      }
-
-      .modal-section-content {
-        color: #666;
-        line-height: 1.8;
-        font-size: 16px;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .modal-section-content {
-        color: #aaa;
-      }
-
-      .tech-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 15px;
-      }
-
-      .tech-item {
-        background: #333;
-        color: #fff;
-        padding: 8px 16px;
-        font-size: 14px;
-        border: 2px solid #333;
-        transition: all 0.3s ease;
-      }
-
-      body.dark-mode .tech-item {
-        background: #0a0a0a;
-        border-color: #0ff;
-        color: #0ff;
-      }
-
-      .screenshot-container {
-        background: #f0f0f0;
-        border: 4px solid #333;
-        padding: 20px;
-        margin: 20px 0;
-        aspect-ratio: 16/9;
-        overflow: hidden;
-        border-radius: 8px;
-        position: relative;
-      }
-
-      .screenshot-container::after {
-        content: "";
-        position: absolute;
-        inset: 20px; /* respect padding to avoid covering border */
-        pointer-events: none;
-        border-radius: 6px;
-        background: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0) 0%,
-          rgba(0, 0, 0, 0.06) 100%
-        );
-      }
-
-      .screenshot-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        border-radius: 6px;
-      }
-      body.dark-mode .screenshot-container {
-        background: #0a0a0a;
-        border-color: #0ff;
-      }
-
-      .screenshot-gallery {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .screenshot-placeholder {
-        background: #ddd;
-        color: #666;
-        padding: 60px 20px;
-        font-size: 18px;
-        border: 3px dashed #999;
-        transition: all 0.8s ease;
-      }
-
-      body.dark-mode .screenshot-placeholder {
-        background: #1a1a1a;
-        border-color: #0aa;
-        color: #0aa;
-      }
-
-      /* Animations */
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-50px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-      }
-
-      /* Scroll indicator */
-      .scroll-indicator {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 24px;
-        animation: bounce 2s infinite;
-        z-index: 100;
-        color: #333;
-        transition: color 0.8s ease;
-      }
-
-      body.dark-mode .scroll-indicator {
-        color: #0ff;
-      }
-
-      @keyframes bounce {
-        0%,
-        20%,
-        50%,
-        80%,
-        100% {
-          transform: translateX(-50%) translateY(0);
-        }
-        40% {
-          transform: translateX(-50%) translateY(-10px);
-        }
-        60% {
-          transform: translateX(-50%) translateY(-5px);
-        }
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      @media (max-width: 768px) {
-        .about-content {
-          grid-template-columns: 1fr;
-          gap: 30px;
-        }
-
-        .nav {
-          gap: 5px;
-        }
-
-        .nav-btn {
-          padding: 8px 12px;
-          font-size: 12px;
-        }
-
-        .pixel-title {
-          font-size: 32px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="pixel-grid"></div>
-
-    <nav class="nav">
-      <button class="nav-btn" onclick="scrollToSection('home')">Home</button>
-      <button class="nav-btn" onclick="scrollToSection('about')">About</button>
-      <button class="nav-btn" onclick="scrollToSection('projects')">
-        Work
-      </button>
-      <button class="nav-btn" onclick="scrollToSection('security')">
-        Security
-      </button>
-      <button class="nav-btn" onclick="scrollToSection('contact')">
-        Contact
-      </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="Subhan Umer — Application Security Engineer & DevSecOps. 6 published CVEs/advisories, enterprise bug bounties, #1 ranked CTF team in Pakistan." />
+  <title>Subhan Umer — Application Security / DevSecOps</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ░░ Preloader ░░ -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="boot">
+      <p class="boot-line">[ ok ] init subhan_umer.sys</p>
+      <p class="boot-line">[ ok ] loading disclosures... 6 found</p>
+      <p class="boot-line">[ ok ] mounting /portfolio</p>
+      <p class="boot-line accent">[ >> ] access granted_</p>
+    </div>
+    <div class="preloader-bar"><span></span></div>
+  </div>
+
+  <!-- ░░ Ambience ░░ -->
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- ░░ Header ░░ -->
+  <header class="site-header" id="siteHeader">
+    <a class="logo" href="#top" data-hover>
+      <span class="logo-mark">su</span><span class="logo-cursor">_</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#about" data-hover><span>01</span>About</a>
+      <a href="#impact" data-hover><span>02</span>CVEs</a>
+      <a href="#experience" data-hover><span>03</span>Experience</a>
+      <a href="#projects" data-hover><span>04</span>Projects</a>
+      <a href="#contact" data-hover><span>05</span>Contact</a>
     </nav>
+    <a class="header-cta" href="mailto:subh4num3r@gmail.com" data-hover data-magnetic>
+      <span class="dot"></span> open to work
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
 
-    <!-- Section 1: Homepage -->
-    <section class="section" id="home">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">█▄ WEB DEVELOPER █▄</div>
-          <p class="pixel-subtitle">
-            Crafting Digital Experiences, One Pixel at a Time
-          </p>
+  <!-- ░░ Mobile menu ░░ -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <nav aria-label="Mobile">
+      <a href="#about"><span>01</span>About</a>
+      <a href="#impact"><span>02</span>CVEs</a>
+      <a href="#experience"><span>03</span>Experience</a>
+      <a href="#projects"><span>04</span>Projects</a>
+      <a href="#contact"><span>05</span>Contact</a>
+    </nav>
+  </div>
+
+  <main id="top">
+
+    <!-- ░░ Hero ░░ -->
+    <section class="hero">
+      <div class="hero-meta mono">
+        <span class="reveal-chip">// based in islamabad, pk</span>
+        <span class="reveal-chip">// utc+5</span>
+        <span class="reveal-chip status"><i></i> available for engagements</span>
+      </div>
+
+      <h1 class="hero-title" aria-label="Subhan Umer">
+        <span class="line"><span class="word">SUBHAN</span></span>
+        <span class="line"><span class="word outline">UMER<em class="accent">.</em></span></span>
+      </h1>
+
+      <div class="hero-sub">
+        <p class="hero-role mono">
+          <span class="prompt">$</span> whoami →
+          <span class="scramble" id="scrambleRole">application security engineer</span>
+        </p>
+        <p class="hero-desc">
+          I break authentication systems used by millions, then ship the fixes.
+          <strong>6 published CVEs &amp; advisories</strong> across better-auth, n8n, SAP and
+          oauth2-server. Findings validated by Twilio, SAP and FusionAuth.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat" data-count="6">
+          <span class="stat-num mono">0</span>
+          <span class="stat-label">CVEs &amp; advisories</span>
         </div>
-
-        <div class="projects-grid">
-          <div class="project-card">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="8" y="8" width="32" height="32" fill="#333" rx="2" />
-                <rect x="10" y="10" width="28" height="24" fill="#fff" rx="1" />
-                <rect x="10" y="35" width="28" height="2" fill="#333" />
-                <circle cx="24" cy="39" r="1.5" fill="#333" />
-                <line
-                  x1="14"
-                  y1="14"
-                  x2="22"
-                  y2="14"
-                  stroke="#333"
-                  stroke-width="1"
-                />
-                <line
-                  x1="14"
-                  y1="18"
-                  x2="34"
-                  y2="18"
-                  stroke="#ddd"
-                  stroke-width="1"
-                />
-                <line
-                  x1="14"
-                  y1="22"
-                  x2="34"
-                  y2="22"
-                  stroke="#ddd"
-                  stroke-width="1"
-                />
-                <line
-                  x1="14"
-                  y1="26"
-                  x2="28"
-                  y2="26"
-                  stroke="#ddd"
-                  stroke-width="1"
-                />
-              </svg>
-            </div>
-            <h3 class="project-title">Full-Stack Development</h3>
-            <p class="project-desc">
-              Building robust web applications with modern frameworks and best
-              practices.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">React</span>
-              <span class="tech-tag">Node.js</span>
-              <span class="tech-tag">MongoDB</span>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="6"
-                  y="8"
-                  width="36"
-                  height="28"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="14" r="1.5" fill="#333" />
-                <circle cx="18" cy="14" r="1.5" fill="#333" />
-                <circle cx="24" cy="14" r="1.5" fill="#333" />
-                <path
-                  d="M 10 20 Q 15 25 24 22 Q 33 25 38 20"
-                  stroke="#333"
-                  stroke-width="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M 12 28 L 14 32 L 16 28"
-                  stroke="#333"
-                  stroke-width="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M 32 28 L 34 32 L 36 28"
-                  stroke="#333"
-                  stroke-width="1.5"
-                  fill="none"
-                />
-              </svg>
-            </div>
-            <h3 class="project-title">UI/UX Design</h3>
-            <p class="project-desc">
-              Creating intuitive interfaces that users love to interact with.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">Figma</span>
-              <span class="tech-tag">CSS3</span>
-              <span class="tech-tag">Animation</span>
-            </div>
-          </div>
-
-          <div class="project-card">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 24 8 L 32 12 L 32 20 C 32 28 24 34 24 34 C 24 34 16 28 16 20 L 16 12 Z"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-                <circle cx="24" cy="22" r="3" fill="#333" />
-                <path
-                  d="M 18 38 L 30 38"
-                  stroke="#333"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-            <h3 class="project-title">Performance</h3>
-            <p class="project-desc">
-              Optimizing applications for speed and efficiency across all
-              devices.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">Webpack</span>
-              <span class="tech-tag">CDN</span>
-              <span class="tech-tag">Caching</span>
-            </div>
-          </div>
+        <div class="stat" data-count="10" data-suffix="+">
+          <span class="stat-num mono">0</span>
+          <span class="stat-label">validated bounty findings</span>
+        </div>
+        <div class="stat" data-count="30" data-suffix="+">
+          <span class="stat-num mono">0</span>
+          <span class="stat-label">vulns remediated in prod</span>
+        </div>
+        <div class="stat" data-count="1" data-prefix="#">
+          <span class="stat-num mono">0</span>
+          <span class="stat-label">CTF team in Pakistan</span>
         </div>
       </div>
-      <div class="scroll-indicator">▼</div>
+
+      <a class="scroll-hint mono" href="#about" data-hover aria-label="Scroll to about section">
+        <span>scroll</span>
+        <svg width="14" height="40" viewBox="0 0 14 40" fill="none" aria-hidden="true">
+          <path d="M7 0v36m0 0l6-6m-6 6l-6-6" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </a>
     </section>
 
-    <!-- Section 1.5: About Me -->
-    <section class="section" id="about">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">█▄ ABOUT ME █▄</div>
-          <p class="pixel-subtitle">Who I Am & What I Do</p>
+    <!-- ░░ Marquee ░░ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>APPSEC ✦ DEVSECOPS ✦ CVE RESEARCH ✦ OAUTH / OIDC ✦ RED TEAM ✦ CODEQL ✦ SEMGREP ✦ BUG BOUNTY ✦&nbsp;</span>
+        <span>APPSEC ✦ DEVSECOPS ✦ CVE RESEARCH ✦ OAUTH / OIDC ✦ RED TEAM ✦ CODEQL ✦ SEMGREP ✦ BUG BOUNTY ✦&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- ░░ About ░░ -->
+    <section class="section about" id="about">
+      <div class="section-head">
+        <span class="sec-index mono">01</span>
+        <h2 class="sec-title"><span class="line"><span>Breaking things,</span></span><span class="line"><span>then fixing them<em class="accent">.</em></span></span></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-copy">
+          <p class="big-p reveal-p">
+            I'm an <mark>application security engineer</mark> who lives in the gap between
+            offense and engineering. I find exploitable flaws in hardened enterprise targets —
+            auth bypass, business-logic abuse, crypto downgrades — and translate them into
+            <mark>developer-ready fixes</mark> that actually ship.
+          </p>
+          <p class="reveal-p">
+            By day I run authorized penetration tests as a VAPT engineer at Snskies, build
+            adversary-simulation tooling on MITRE Caldera, and develop offensive research tools
+            at FAST&nbsp;(NUCES). By night I audit open-source auth frameworks — which is how a
+            27K-star library used by millions ended up patching a critical refresh-token replay
+            I reported.
+          </p>
+          <p class="reveal-p">
+            Before security, I shipped production MERN applications — so I write findings the
+            way developers want to read them, and I wire SAST/SCA gates into the same CI/CD
+            pipelines I once deployed through.
+          </p>
         </div>
-
-        <div class="about-content">
-          <div class="about-text">
-            <p>
-              I'm a passionate full-stack developer with a background in
-              cybersecurity and web pentesting. With years of experience
-              building both secure; and insecure web applications, I've learned
-              that performance and security go hand-in-hand.
-            </p>
-            <p>
-              I started my journey as a frontend developer, but quickly realized
-              that understanding the entire stack—from databases to
-              deployment—was crucial. Today, I build comprehensive solutions
-              that not only work great but are built with security as a core
-              principle.
-            </p>
-            <p>
-              Beyond development, I'm actively involved in the security
-              community, participating in CTF events and organizing web security
-              challenges. I believe in continuous learning and staying ahead of
-              emerging threats in the digital landscape.
-            </p>
-          </div>
-
-          <div class="skills-container">
-            <div class="skill-group">
-              <div class="skill-label">Frontend</div>
-              <div class="skill-items">
-                <span class="skill-item">React</span>
-                <span class="skill-item">Vue.js</span>
-                <span class="skill-item">JavaScript</span>
-                <span class="skill-item">CSS3</span>
-                <span class="skill-item">HTML5</span>
-              </div>
-            </div>
-
-            <div class="skill-group">
-              <div class="skill-label">Backend</div>
-              <div class="skill-items">
-                <span class="skill-item">Node.js</span>
-                <span class="skill-item">Express</span>
-                <span class="skill-item">Python</span>
-                <span class="skill-item">REST APIs</span>
-                <span class="skill-item">GraphQL</span>
-              </div>
-            </div>
-
-            <div class="skill-group">
-              <div class="skill-label">Database & Tools</div>
-              <div class="skill-items">
-                <span class="skill-item">MongoDB</span>
-                <span class="skill-item">PostgreSQL</span>
-                <span class="skill-item">Docker</span>
-                <span class="skill-item">AWS</span>
-                <span class="skill-item">Git</span>
-              </div>
+        <aside class="about-side">
+          <div class="terminal-card reveal-card">
+            <div class="terminal-bar"><i></i><i></i><i></i><span class="mono">~/stack</span></div>
+            <div class="terminal-body mono">
+              <p><span class="tk">offense</span>  burp · caldera · nuclei · ffuf · sqlmap</p>
+              <p><span class="tk">sast</span>     codeql · semgrep(custom) · snyk · zap</p>
+              <p><span class="tk">code</span>     go · python · c++ · ts/node · bash</p>
+              <p><span class="tk">cloud</span>    aws · docker · k8s · gh-actions · terraform</p>
+              <p><span class="tk">defense</span>  wazuh · suricata · soc workflow</p>
+              <p><span class="tk">model</span>    stride · asvs · pci-dss · soc2</p>
             </div>
           </div>
-        </div>
+          <div class="edu-card reveal-card">
+            <span class="mono edu-tag">education</span>
+            <h3>BS Cybersecurity</h3>
+            <p>FAST — NUCES, Islamabad<br /><span class="mono dim">2023 → present</span></p>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <!-- Section 2: Detailed Projects -->
-    <section class="section" id="projects">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">█▄ FEATURED WORK █▄</div>
-          <p class="pixel-subtitle">Selected Projects & Achievements</p>
-        </div>
+    <!-- ░░ Security Impact / CVEs ░░ -->
+    <section class="section impact" id="impact">
+      <div class="section-head">
+        <span class="sec-index mono">02</span>
+        <h2 class="sec-title"><span class="line"><span>Security impact<em class="accent">.</em></span></span></h2>
+        <p class="sec-sub mono">// published CVEs &amp; advisories — patched upstream</p>
+      </div>
 
-        <div class="projects-grid">
-          <div class="project-card" onclick="showProjectModal('ecommerce')">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="10"
-                  y="12"
-                  width="28"
-                  height="24"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <path
-                  d="M 14 16 L 18 12"
-                  stroke="#333"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M 34 16 L 30 12"
-                  stroke="#333"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <circle
-                  cx="24"
-                  cy="26"
-                  r="4"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="24"
-                  y1="22"
-                  x2="24"
-                  y2="30"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="20"
-                  y1="26"
-                  x2="28"
-                  y2="26"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="36"
-                  x2="36"
-                  y2="36"
-                  stroke="#333"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-            <h3 class="project-title">Ride-Sharing Web App</h3>
-            <p class="project-desc">
-              Web-based ride-sharing with token-based fraud prevention system.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">PHP</span>
-              <span class="tech-tag">JavaScript</span>
-              <span class="tech-tag">MySQL</span>
-            </div>
+      <div class="cve-list">
+        <article class="cve-card" data-sev="medium" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">MODERATE</span>
+            <a class="cve-id mono" href="https://github.com/advisories/GHSA-pw9m-5jxm-xr6h" target="_blank" rel="noopener" style="color:inherit">GHSA-pw9m-5jxm-xr6h ↗</a>
           </div>
+          <h3>better-auth — OAuth Refresh-Token Replay</h3>
+          <p>The confidential client secret was never verified during the OAuth refresh-token
+             grant on the oidc-provider and MCP plugins (CWE-306), so a refresh token could be
+             replayed without client authentication. Reported in a 27K-star auth framework with
+             millions of npm downloads; upstream patch shipped. CVE-2026-53512 reserved.</p>
+          <div class="cve-tags mono"><span>CWE-306</span><span>OAuth 2.0</span><span>patch shipped</span></div>
+        </article>
 
-          <div class="project-card" onclick="showProjectModal('dashboard')">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="8"
-                  y="8"
-                  width="32"
-                  height="28"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <line
-                  x1="8"
-                  y1="14"
-                  x2="40"
-                  y2="14"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="12"
-                  y1="18"
-                  x2="14"
-                  y2="28"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="20"
-                  y1="18"
-                  x2="20"
-                  y2="30"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="28"
-                  y1="20"
-                  x2="28"
-                  y2="30"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="36"
-                  y1="16"
-                  x2="36"
-                  y2="30"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle cx="12" cy="17" r="1" fill="#333" />
-                <circle cx="20" cy="17" r="1" fill="#333" />
-                <circle cx="28" cy="17" r="1" fill="#333" />
-                <circle cx="36" cy="17" r="1" fill="#333" />
-              </svg>
-            </div>
-            <h3 class="project-title">CTF News Hub</h3>
-            <p class="project-desc">
-              CyberSecurity platform with CTF events, reviews, and techniques.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">PHP</span>
-              <span class="tech-tag">HTML5/CSS3</span>
-              <span class="tech-tag">MySQL</span>
-            </div>
+        <article class="cve-card" data-sev="high" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">HIGH · CVSS 8.7</span>
+            <a class="cve-id mono" href="https://github.com/advisories/GHSA-9h47-pqcx-hjr4" target="_blank" rel="noopener" style="color:inherit">GHSA-9h47-pqcx-hjr4 ↗</a>
           </div>
+          <h3>better-auth — OIDC Crypto Defaults</h3>
+          <p>Exposed <code>alg=none</code> acceptance and silent PKCE downgrade in the OIDC
+             provider, violating OAuth 2.1 / RFC 9700 (CWE-327). Fix merged upstream.</p>
+          <div class="cve-tags mono"><span>CWE-327</span><span>OIDC</span><span>fix merged</span></div>
+        </article>
 
-          <div class="project-card" onclick="showProjectModal('gateway')">
-            <div class="project-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="3"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="36"
-                  cy="12"
-                  r="3"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="3"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="12"
-                  cy="36"
-                  r="3"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <circle
-                  cx="36"
-                  cy="36"
-                  r="3"
-                  fill="none"
-                  stroke="#333"
-                  stroke-width="2"
-                />
-                <line
-                  x1="15"
-                  y1="12"
-                  x2="33"
-                  y2="12"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="15"
-                  x2="24"
-                  y2="21"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="36"
-                  y1="15"
-                  x2="24"
-                  y2="21"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="36"
-                  x2="36"
-                  y2="36"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="33"
-                  x2="24"
-                  y2="27"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="36"
-                  y1="33"
-                  x2="24"
-                  y2="27"
-                  stroke="#333"
-                  stroke-width="1.5"
-                />
-              </svg>
-            </div>
-            <h3 class="project-title">Secure Communication</h3>
-            <p class="project-desc">
-              End-to-end encrypted messaging with AES-256-GCM encryption.
-            </p>
-            <div class="tech-tags">
-              <span class="tech-tag">Node.js</span>
-              <span class="tech-tag">React</span>
-              <span class="tech-tag">PostgreSQL</span>
-            </div>
+        <article class="cve-card" data-sev="medium" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">MEDIUM</span>
+            <a class="cve-id mono" href="https://nvd.nist.gov/vuln/detail/CVE-2026-33720" target="_blank" rel="noopener" style="color:inherit">CVE-2026-33720 ↗</a>
           </div>
-        </div>
+          <h3>n8n — OAuth Authorization Bypass</h3>
+          <p>Missing state-parameter ownership verification in a 190K-star automation platform
+             (100M+ Docker pulls), enabling attacker-controlled credential binding (CWE-863).
+             Patch released.</p>
+          <div class="cve-tags mono"><span>CWE-863</span><span>published CVE</span><span>patched</span></div>
+        </article>
+
+        <article class="cve-card" data-sev="medium" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">SAP HoF</span>
+            <span class="cve-id mono">May 2026</span>
+          </div>
+          <h3>SAP — Security Hall of Fame</h3>
+          <p>Recognized on the SAP Security Hall of Fame (May 2026) for a validated server-side
+             vulnerability found through source review.</p>
+          <div class="cve-tags mono"><span>SAP</span><span>source review</span><span>validated</span></div>
+        </article>
+
+        <article class="cve-card" data-sev="medium" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">MEDIUM · CVSS 5.4</span>
+            <a class="cve-id mono" href="https://security.snyk.io/vuln/SNYK-JS-OAUTH2SERVER-3009137" target="_blank" rel="noopener" style="color:inherit">SNYK-JS-OAUTH2SERVER-3009137 ↗</a>
+          </div>
+          <h3>oauth2-server (Node.js)</h3>
+          <p>Manual source-review finding in the popular Node.js OAuth2 framework, published as a
+             Snyk advisory.</p>
+          <div class="cve-tags mono"><span>advisory</span><span>node.js</span></div>
+        </article>
+
+        <article class="cve-card" data-sev="medium" data-tilt>
+          <div class="cve-top">
+            <span class="sev mono">HackerOne</span>
+            <span class="cve-id mono">validated</span>
+          </div>
+          <h3>Twilio — Validated Finding</h3>
+          <p>Finding validated via HackerOne on the NYSE-listed cloud-communications platform.
+             15+ further validated findings across public and private programs including SAP,
+             RSR Group and FusionAuth; details under NDA.</p>
+          <div class="cve-tags mono"><span>hackerone</span><span>NDA programs</span></div>
+        </article>
       </div>
     </section>
 
-    <!-- Section 3: Security Transition -->
-    <section class="section" id="security">
-      <div class="container">
-        <div class="security-intro">
-          <div class="warning-icon">
-            <svg
-              width="80"
-              height="80"
-              viewBox="0 0 80 80"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M 40 10 L 60 20 L 60 40 C 60 55 40 70 40 70 C 40 70 20 55 20 40 L 20 20 Z"
-                fill="none"
-                stroke="#e74c3c"
-                stroke-width="3"
-                stroke-linejoin="round"
-              />
-              <line
-                x1="40"
-                y1="30"
-                x2="40"
-                y2="50"
-                stroke="#e74c3c"
-                stroke-width="2"
-              />
-              <line
-                x1="30"
-                y1="40"
-                x2="50"
-                y2="40"
-                stroke="#e74c3c"
-                stroke-width="2"
-              />
-            </svg>
-          </div>
-          <div class="pixel-title">SECURITY CRITICAL</div>
-          <p class="pixel-subtitle">
-            Where Web Development Meets Cybersecurity
-          </p>
-        </div>
+    <!-- ░░ Experience ░░ -->
+    <section class="section experience" id="experience">
+      <div class="section-head">
+        <span class="sec-index mono">03</span>
+        <h2 class="sec-title"><span class="line"><span>Experience<em class="accent">.</em></span></span></h2>
+      </div>
 
-        <div class="ai-warning">
-          <h2
-            class="project-title"
-            style="text-align: center; margin-bottom: 30px"
-          >
-            The Hidden Cost of AI-Assisted Development
-          </h2>
-          <p class="project-desc" style="text-align: center; font-size: 18px">
-            As AI tools become ubiquitous in development workflows, we're
-            witnessing an unprecedented rise in security vulnerabilities. The
-            convenience of AI-generated code comes with a dangerous tradeoff.
-          </p>
-        </div>
+      <div class="timeline">
+        <div class="timeline-line" aria-hidden="true"><span id="timelineProgress"></span></div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">76%</div>
-            <p class="stat-label">
-              of AI-generated code contains at least one security flaw
-            </p>
+        <article class="t-item">
+          <div class="t-when mono">jan 2026 → present</div>
+          <div class="t-body">
+            <h3>VAPT Engineer <span class="t-org">@ Snskies — Cybersecurity Services (PK &amp; UAE)</span></h3>
+            <ul>
+              <li>Validated &amp; drove remediation of 30+ vulnerabilities across web apps, APIs and corporate network infrastructure with reproducible PoCs and developer-ready fix guidance.</li>
+              <li>Uncovered exposed employee PII, leaked credentials and misconfigured assets via internal OSINT; coordinated takedown and hardening.</li>
+              <li>Built an offensive attack-simulation platform on MITRE Caldera with custom adversary profiles &amp; plugins for automated purple-team exercises.</li>
+            </ul>
           </div>
+        </article>
 
-          <div class="stat-card">
-            <div class="stat-number">3x</div>
-            <p class="stat-label">
-              increase in SQL injection vulnerabilities since 2022
-            </p>
+        <article class="t-item">
+          <div class="t-when mono">may 2026 → present</div>
+          <div class="t-body">
+            <h3>Research Assistant — Security Tooling <span class="t-org">@ FAST (NUCES)</span></h3>
+            <ul>
+              <li>Developing offensive security tools and adversary-simulation capabilities for internal research (Python / C++).</li>
+            </ul>
           </div>
+        </article>
 
-          <div class="stat-card">
-            <div class="stat-number">89%</div>
-            <p class="stat-label">
-              of developers don't review AI-generated code for security
-            </p>
+        <article class="t-item">
+          <div class="t-when mono">feb 2025 → jan 2026</div>
+          <div class="t-body">
+            <h3>Backend Developer (MERN) <span class="t-org">@ Flush It</span></h3>
+            <ul>
+              <li>Built &amp; deployed the full-stack MERN application, configured the email stack, and added Semgrep SAST + npm-audit SCA gates in GitHub Actions CI.</li>
+            </ul>
           </div>
-        </div>
+        </article>
+
+        <article class="t-item">
+          <div class="t-when mono">2024 → present</div>
+          <div class="t-body">
+            <h3>Independent Security Researcher <span class="t-org">@ Bug Bounty / Contract</span></h3>
+            <ul>
+              <li>Trusted-researcher status in NDA-backed enterprise programs (SAP Private, RSR Group, FusionAuth); bounties via high-signal manual testing focused on auth bypass, business-logic abuse and exploit-chain validation.</li>
+            </ul>
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- Section 3.5: CTF Experience -->
-    <section class="section" id="ctf-experience">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">█▄ CTF EXPERIENCE █▄</div>
-          <p class="pixel-subtitle">
-            Organizing & Contributing to Web Security Challenges
-          </p>
-        </div>
+    <!-- ░░ Projects ░░ -->
+    <section class="section projects" id="projects">
+      <div class="section-head">
+        <span class="sec-index mono">04</span>
+        <h2 class="sec-title"><span class="line"><span>Selected work<em class="accent">.</em></span></span></h2>
+      </div>
 
-        <div class="ctf-grid">
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="12"
-                  y="12"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <circle cx="18" cy="18" r="2" fill="#9b59b6" />
-                <circle cx="30" cy="18" r="2" fill="#9b59b6" />
-                <path
-                  d="M 18 24 L 22 28 L 26 24 L 30 28"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  fill="none"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="14"
-                  y1="32"
-                  x2="34"
-                  y2="32"
-                  stroke="#9b59b6"
-                  stroke-width="1.5"
-                />
-              </svg>
-            </div>
-            <h3 class="ctf-title">NASCON 2025</h3>
-            <p class="ctf-year">2025</p>
-            <p class="ctf-desc">
-              Organized and developed challenging web category challenges
-              focusing on OWASP Top 10 vulnerabilities including XSS, SQL
-              Injection, and authentication bypasses.
-            </p>
-            <span class="ctf-role">Web Category Organizer</span>
-          </div>
+      <div class="project-grid">
+        <article class="project-card" data-tilt>
+          <span class="p-num mono">/01</span>
+          <h3>Threat-Intelligence Platform</h3>
+          <p>Automated credential-leak and actor-relationship detection across Tor, Telegram and
+             Discord using ML correlation and graph analysis — actionable intel from unstructured
+             dark-web data.</p>
+          <div class="p-stack mono"><span>python</span><span>ml</span><span>graph analysis</span></div>
+          <div class="p-arrow" aria-hidden="true">↗</div>
+        </article>
 
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="10"
-                  y="14"
-                  width="28"
-                  height="20"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <rect
-                  x="14"
-                  y="18"
-                  width="5"
-                  height="8"
-                  fill="#9b59b6"
-                  rx="1"
-                />
-                <rect
-                  x="22"
-                  y="16"
-                  width="5"
-                  height="10"
-                  fill="#9b59b6"
-                  rx="1"
-                />
-                <rect
-                  x="30"
-                  y="14"
-                  width="5"
-                  height="12"
-                  fill="#9b59b6"
-                  rx="1"
-                />
-                <line
-                  x1="8"
-                  y1="38"
-                  x2="40"
-                  y2="38"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                />
-                <circle cx="24" cy="42" r="1.5" fill="#9b59b6" />
-              </svg>
-            </div>
-            <h3 class="ctf-title">C00KED 2025</h3>
-            <p class="ctf-year">2025</p>
-            <p class="ctf-desc">
-              Developed intricate web security challenges featuring real-world
-              vulnerability scenarios, secure coding practices assessment, and
-              advanced exploitation techniques.
-            </p>
-            <span class="ctf-role">Web Challenge Developer</span>
-          </div>
+        <article class="project-card" data-tilt>
+          <span class="p-num mono">/02</span>
+          <h3>Caldera Attack-Simulation Toolkit</h3>
+          <p>Extended MITRE Caldera with custom plugins, adversary profiles and
+             environment-specific payloads; benchmarked detection coverage against EDR/SIEM
+             baselines to surface SOC tuning gaps.</p>
+          <div class="p-stack mono"><span>python</span><span>mitre att&amp;ck</span><span>purple team</span></div>
+          <div class="p-arrow" aria-hidden="true">↗</div>
+        </article>
 
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 24 8 L 30 12 L 28 20 L 34 24 L 26 26 L 24 34 L 22 26 L 14 24 L 20 20 L 18 12 Z"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 class="ctf-title">Cyber Muhafiz 2025</h3>
-            <p class="ctf-year">2025 · 1st Position</p>
-            <p class="ctf-desc">
-              Winner of the national cybersecurity competition organized by
-              NCERT. Demonstrated advanced skills in web exploitation,
-              vulnerability assessment, and secure coding practices.
-            </p>
-            <span class="ctf-role">🏆 National Champion</span>
-          </div>
-
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="14"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                />
-                <path
-                  d="M 24 12 L 28 18 L 35 18 L 30 22 L 33 28 L 24 24 L 15 28 L 18 22 L 13 18 L 20 18 Z"
-                  fill="#9b59b6"
-                />
-              </svg>
-            </div>
-            <h3 class="ctf-title">AirTech 2025</h3>
-            <p class="ctf-year">2025 · 1st Position</p>
-            <p class="ctf-desc">
-              Secured first position in the CTF competition at AirTech 2025.
-              Showcased expertise in penetration testing, API security, and
-              real-time vulnerability exploitation.
-            </p>
-            <span class="ctf-role">🥇 First Place Winner</span>
-          </div>
-
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="24"
-                  cy="20"
-                  r="5"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                />
-                <path
-                  d="M 14 28 Q 14 32 24 32 Q 34 32 34 28"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                />
-                <path
-                  d="M 18 32 L 16 38 L 20 36 L 24 38 L 28 36 L 32 38 L 30 32"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="1.5"
-                  stroke-linejoin="round"
-                />
-                <circle cx="20" cy="26" r="1.5" fill="#9b59b6" />
-                <circle cx="28" cy="26" r="1.5" fill="#9b59b6" />
-              </svg>
-            </div>
-            <h3 class="ctf-title">Web Security Research</h3>
-            <p class="ctf-year">Ongoing</p>
-            <p class="ctf-desc">
-              Actively participating in security research, vulnerability
-              disclosure programs, and mentoring newcomers in web security
-              fundamentals and CTF strategies.
-            </p>
-            <span class="ctf-role">Security Researcher & Mentor</span>
-          </div>
-
-          <div class="ctf-card">
-            <div class="ctf-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 24 6 L 32 10 L 32 18 C 32 26 24 30 24 30 C 24 30 16 26 16 18 L 16 10 Z"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M 20 18 L 23 21 L 29 15"
-                  fill="none"
-                  stroke="#9b59b6"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 class="ctf-title">Security & Defense</h3>
-            <p class="ctf-year">2023-2025</p>
-            <p class="ctf-desc">
-              Participated in multiple security competitions and
-              capture-the-flag events. Developed expertise in defensive
-              security, incident response, and secure architecture design.
-            </p>
-            <span class="ctf-role">Security Competitor</span>
-          </div>
-        </div>
+        <article class="project-card" data-tilt>
+          <span class="p-num mono">/03</span>
+          <h3>Production MERN Apps &amp; APIs</h3>
+          <p>Full-stack applications with security-by-design auth, RBAC, input validation and
+             CI-integrated SAST scanning — built to be attacked.</p>
+          <div class="p-stack mono"><span>node.js</span><span>react</span><span>mongodb</span><span>ci/cd</span></div>
+          <div class="p-arrow" aria-hidden="true">↗</div>
+        </article>
       </div>
     </section>
 
-    <!-- Section 4: AI Impact Details -->
-    <section class="section">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">⚡ VULNERABILITY PATTERNS ⚡</div>
-          <p class="pixel-subtitle">
-            Common Security Flaws in AI-Generated Code
-          </p>
-        </div>
-
-        <div class="vulnerability-list">
-          <div class="vulnerability-item">
-            <h3 class="vuln-title">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style="
-                  display: inline-block;
-                  margin-right: 8px;
-                  vertical-align: middle;
-                "
-              >
-                <path
-                  d="M 10 2 L 15 5 L 15 10 C 15 14 10 17 10 17 C 10 17 5 14 5 10 L 5 5 Z"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  stroke-linejoin="round"
-                />
-                <line
-                  x1="10"
-                  y1="6"
-                  x2="10"
-                  y2="12"
-                  stroke="#e74c3c"
-                  stroke-width="1"
-                />
-                <line
-                  x1="7"
-                  y1="9"
-                  x2="13"
-                  y2="9"
-                  stroke="#e74c3c"
-                  stroke-width="1"
-                />
-              </svg>
-              Insecure Authentication
-            </h3>
-            <p class="vuln-desc">
-              AI models often generate weak authentication logic, missing
-              crucial security checks like rate limiting, session management,
-              and multi-factor authentication implementation.
-            </p>
-          </div>
-
-          <div class="vulnerability-item">
-            <h3 class="vuln-title">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style="
-                  display: inline-block;
-                  margin-right: 8px;
-                  vertical-align: middle;
-                "
-              >
-                <rect
-                  x="3"
-                  y="8"
-                  width="14"
-                  height="8"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  rx="1"
-                />
-                <path
-                  d="M 7 8 L 7 6 Q 7 4 10 4 Q 13 4 13 6 L 13 8"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <circle cx="10" cy="12" r="1" fill="#e74c3c" />
-              </svg>
-              SQL Injection Vulnerabilities
-            </h3>
-            <p class="vuln-desc">
-              Despite being a well-known issue, AI-generated database queries
-              frequently lack proper input sanitization and parameterized
-              statements, leaving systems vulnerable to injection attacks.
-            </p>
-          </div>
-
-          <div class="vulnerability-item">
-            <h3 class="vuln-title">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style="
-                  display: inline-block;
-                  margin-right: 8px;
-                  vertical-align: middle;
-                "
-              >
-                <rect
-                  x="6"
-                  y="10"
-                  width="8"
-                  height="6"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  rx="1"
-                />
-                <path
-                  d="M 8 10 L 8 7 Q 8 5 10 5 Q 12 5 12 7 L 12 10"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-                <circle cx="10" cy="13" r="0.8" fill="#e74c3c" />
-              </svg>
-              Hardcoded Credentials
-            </h3>
-            <p class="vuln-desc">
-              AI models trained on public repositories often reproduce patterns
-              of hardcoded API keys, passwords, and tokens directly in source
-              code.
-            </p>
-          </div>
-
-          <div class="vulnerability-item">
-            <h3 class="vuln-title">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style="
-                  display: inline-block;
-                  margin-right: 8px;
-                  vertical-align: middle;
-                "
-              >
-                <circle
-                  cx="10"
-                  cy="10"
-                  r="7"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M 6 10 Q 8 12 10 10 Q 12 8 14 10"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="10"
-                  y1="5"
-                  x2="10"
-                  y2="7"
-                  stroke="#e74c3c"
-                  stroke-width="0.8"
-                />
-              </svg>
-              Cross-Site Scripting (XSS)
-            </h3>
-            <p class="vuln-desc">
-              Insufficient output encoding and validation in AI-generated
-              frontend code creates pathways for malicious script injection.
-            </p>
-          </div>
-
-          <div class="vulnerability-item">
-            <h3 class="vuln-title">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style="
-                  display: inline-block;
-                  margin-right: 8px;
-                  vertical-align: middle;
-                "
-              >
-                <rect
-                  x="4"
-                  y="7"
-                  width="12"
-                  height="10"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="1.5"
-                  rx="1"
-                />
-                <line
-                  x1="4"
-                  y1="10"
-                  x2="16"
-                  y2="10"
-                  stroke="#e74c3c"
-                  stroke-width="1"
-                />
-                <circle
-                  cx="8"
-                  cy="12"
-                  r="1"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="0.8"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="1"
-                  fill="none"
-                  stroke="#e74c3c"
-                  stroke-width="0.8"
-                />
-              </svg>
-              Broken Access Control
-            </h3>
-            <p class="vuln-desc">
-              AI-generated authorization logic often fails to properly implement
-              principle of least privilege, leading to privilege escalation
-              vulnerabilities.
-            </p>
-          </div>
-        </div>
+    <!-- ░░ Achievements strip ░░ -->
+    <section class="achievements">
+      <div class="ach-item reveal-card">
+        <span class="ach-big mono">#1</span>
+        <p>Schrödinger Bears — top-ranked CTF team in Pakistan on CTFtime, core member</p>
+      </div>
+      <div class="ach-item reveal-card">
+        <span class="ach-big mono">1st</span>
+        <p>AirTech CTF 2025 &amp; National CyberMuhafiz CTF 2025</p>
+      </div>
+      <div class="ach-item reveal-card">
+        <span class="ach-big mono">BH</span>
+        <p>Black Hat MEA finalist — Middle East &amp; Africa</p>
       </div>
     </section>
 
-    <!-- Section 5: Solutions -->
-    <section class="section" id="solutions">
-      <div class="container">
-        <div class="pixel-header">
-          <div class="pixel-title">✓ SECURE DEVELOPMENT ✓</div>
-          <p class="pixel-subtitle">
-            My Approach to Building Secure Applications
-          </p>
-        </div>
-
-        <div class="solutions-grid">
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 20 6 L 32 12 L 32 20 C 32 28 20 32 20 32 C 20 32 8 28 8 20 L 8 12 Z"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M 14 20 L 18 24 L 26 16"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">Security-First Architecture</h3>
-            <p class="project-desc">
-              Designing systems with security at the core, not as an
-              afterthought. Every component undergoes threat modeling.
-            </p>
-          </div>
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="12"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                />
-                <path
-                  d="M 14 20 L 18 24 L 26 16"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">Code Review & Auditing</h3>
-            <p class="project-desc">
-              Manual security audits of all code, including AI-generated
-              snippets, with SAST/DAST tools integration.
-            </p>
-          </div>
-
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="8"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                />
-                <path
-                  d="M 20 14 L 20 20 L 25 23"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="2"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <circle
-                  cx="28"
-                  cy="12"
-                  r="2"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <circle
-                  cx="28"
-                  cy="28"
-                  r="2"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">Secure SDLC Implementation</h3>
-            <p class="project-desc">
-              Integrating security practices throughout the development
-              lifecycle with automated vulnerability scanning.
-            </p>
-          </div>
-
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M 20 4 L 28 8 L 28 16 C 28 24 20 28 20 28 C 20 28 12 24 12 16 L 12 8 Z"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M 16 18 L 19 21 L 25 15"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">OWASP Compliance</h3>
-            <p class="project-desc">
-              Adhering to OWASP Top 10 and industry best practices for secure
-              coding standards.
-            </p>
-          </div>
-
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="6"
-                  y="10"
-                  width="28"
-                  height="20"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <path
-                  d="M 14 14 L 14 22 M 20 12 L 20 24 M 26 14 L 26 22"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <line
-                  x1="8"
-                  y1="30"
-                  x2="32"
-                  y2="30"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">Penetration Testing</h3>
-            <p class="project-desc">
-              Conducting thorough security testing to identify and remediate
-              vulnerabilities before deployment.
-            </p>
-          </div>
-
-          <div class="solution-card">
-            <div class="solution-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="10"
-                  y="8"
-                  width="20"
-                  height="24"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="2"
-                  rx="2"
-                />
-                <line
-                  x1="14"
-                  y1="12"
-                  x2="26"
-                  y2="12"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="16"
-                  x2="28"
-                  y2="16"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="20"
-                  x2="28"
-                  y2="20"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="24"
-                  x2="28"
-                  y2="24"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <line
-                  x1="12"
-                  y1="28"
-                  x2="20"
-                  y2="28"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-                <circle
-                  cx="26"
-                  cy="26"
-                  r="2.5"
-                  fill="none"
-                  stroke="#27ae60"
-                  stroke-width="1.5"
-                />
-              </svg>
-            </div>
-            <h3 class="solution-title">Security Monitoring</h3>
-            <p class="project-desc">
-              Implementing continuous monitoring and incident response
-              strategies for production systems.
-            </p>
-          </div>
-        </div>
-
-        <div class="cta-section" id="contact">
-          <h2 class="cta-title">Ready to Build Secure Applications?</h2>
-          <p class="pixel-subtitle" style="color: #ccc; margin: 20px 0">
-            Let's discuss how I can help secure your development pipeline and
-            protect your users.
-          </p>
-          <button
-            class="cta-btn"
-            onclick="window.location.href='contact-page.html'"
-          >
-            Get In Touch
-          </button>
-        </div>
+    <!-- ░░ Contact ░░ -->
+    <section class="section contact" id="contact">
+      <span class="sec-index mono">05 // contact</span>
+      <h2 class="contact-title">
+        <span class="line"><span>Got something</span></span>
+        <span class="line"><span>worth breaking<em class="accent">?</em></span></span>
+      </h2>
+      <p class="contact-sub">Pentest engagements, AppSec roles, security research collabs — my inbox is open.</p>
+      <a class="contact-mail" href="mailto:subh4num3r@gmail.com" data-hover data-magnetic>
+        <span class="mail-text">subh4num3r@gmail.com</span>
+        <span class="mail-arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="contact-links mono">
+        <a href="https://github.com/subhanumer" target="_blank" rel="noopener" data-hover>github ↗</a>
+        <a href="https://www.linkedin.com/in/subhan-umer-875aaa309" target="_blank" rel="noopener" data-hover>linkedin ↗</a>
+        <a href="https://ctftime.org/team/304586" target="_blank" rel="noopener" data-hover>ctftime ↗</a>
+        <a href="tel:+923013723801" data-hover>+92 301 3723801</a>
       </div>
     </section>
+  </main>
 
-    <!-- Project Detail Modals -->
-    <div id="projectModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeProjectModal()">&times;</span>
-        <div id="modalBody"></div>
-      </div>
-    </div>
+  <footer class="site-footer mono">
+    <span>© 2026 subhan umer</span>
+    <span class="dim">designed to be attacked. please try.</span>
+    <a href="#top" data-hover>back to top ↑</a>
+  </footer>
 
-    <script>
-      let darkModeActive = false;
-      const projectData = {
-        ecommerce: {
-          title: "Ride-Sharing Web Application",
-          overview:
-            "Web-based ride-sharing platform with built-in fraud prevention using a token verification system. Users purchase tokens that automatically transfer to drivers upon ride completion, eliminating scammer interactions.",
-          challenge:
-            "Needed to prevent scammers from infiltrating the platform while keeping the system web-accessible without requiring app installation.",
-          solution:
-            "Implemented PHP backend with token-based payment system. Tokens are purchased by users and automatically transfer to drivers post-ride, creating a verifiable transaction history that eliminates fraud.",
-          technologies: [
-            "PHP",
-            "JavaScript",
-            "MySQL",
-            "Google Maps API",
-            "AES Encryption",
-          ],
-          keyFeatures: [
-            "Real-time ride matching and GPS tracking",
-            "Token-based payment with automatic post-ride transfer",
-            "User authentication and session management",
-            "Input validation and encrypted transactions",
-            "Mobile-responsive web interface",
-          ],
-          performance:
-            "Could prevent ~90% of scammer infiltration through token verification. Estimated throughput: 10K+ daily rides. Response time: <2 seconds for ride matching.",
-          images: [
-            "img/chaltejao-home.png",
-            "img/chaltejao-book.png",
-            "img/chaltejao-pricing.png",
-          ],
-        },
-        dashboard: {
-          title: "CyberSecurity CTF & News Hub",
-          overview:
-            "Content hub for cybersecurity enthusiasts featuring CTF event listings, competition reviews, technique write-ups, and security news. 6-page platform with search, filtering, and community engagement.",
-          challenge:
-            "Creating a centralized platform to aggregate CTF information and share security knowledge within the community.",
-          solution:
-            "Built PHP-based content management system with 6 dedicated pages: Home, CTF News, Reviews, Techniques, Blog, and About. Implemented search, filtering, and user registration features.",
-          technologies: ["PHP", "HTML5", "CSS3", "JavaScript", "MySQL"],
-          keyFeatures: [
-            "CTF event aggregation with registration links",
-            "Post-event write-ups and challenge analysis",
-            "Security techniques & tools documentation",
-            "Blog section for security opinions",
-            "User registration and comment moderation",
-          ],
-          performance:
-            "Could attract 50K+ monthly visitors. Support 100+ published articles. Build community of 5K+ registered users.",
-          images: ["img/home.png", "img/news.png", "img/techniques.png"],
-        },
-        gateway: {
-          title: "Secure Communication System",
-          overview:
-            "End-to-end encrypted messaging platform using industry-standard cryptography. Messages encrypted locally before transmission with server unable to decrypt user data.",
-          challenge:
-            "Building a communication system where the server has zero knowledge of message contents while maintaining security and reliability.",
-          solution:
-            "Implemented AES-256-GCM encryption for messages with ECDH key exchange. Developed React frontend with libsodium for client-side encryption and Node.js backend with JWT authentication.",
-          technologies: [
-            "Node.js",
-            "Express",
-            "React",
-            "PostgreSQL",
-            "libsodium",
-            "AES-256-GCM",
-            "ECDH",
-          ],
-          keyFeatures: [
-            "End-to-end encrypted direct messaging",
-            "Two-factor authentication (TOTP)",
-            "Zero-knowledge server architecture",
-            "Encrypted file sharing",
-            "Secure session management with JWT",
-          ],
-          performance:
-            "Could securely handle 10K+ concurrent users. Support encrypted messaging and group chats. Achieve 99%+ uptime with zero encryption vulnerabilities.",
-          images: [],
-        },
-      };
-
-      function showProjectModal(projectId) {
-        const modal = document.getElementById("projectModal");
-        const modalBody = document.getElementById("modalBody");
-        const project = projectData[projectId];
-
-        if (!project) return;
-
-        const techHTML = project.technologies
-          .map((tech) => `<span class="tech-item">${tech}</span>`)
-          .join("");
-        const featuresHTML = project.keyFeatures
-          .map((feature) => `<li>• ${feature}</li>`)
-          .join("");
-        const imagesHTML = (project.images || [])
-          .map(
-            (img) => `
-    <div class="screenshot-container">
-      <img src="${img}" alt="Project screenshot" class="screenshot-image" onerror="(function(el){ const p = document.createElement('div'); p.className='screenshot-placeholder'; p.textContent='📸 Image not found'; el.replaceWith(p); })(this)" />
-    </div>
-  `
-          )
-          .join("");
-
-        modalBody.innerHTML = `
-    <h1 class="modal-title">${project.title}</h1>
-    
-    <div class="modal-section">
-      <h2 class="modal-section-title">Project Overview</h2>
-      <p class="modal-section-content">${project.overview}</p>
-    </div>
-
-    <div class="screenshot-gallery">
-      ${imagesHTML}
-    </div>
-
-    <div class="modal-section">
-      <h2 class="modal-section-title">Challenge</h2>
-      <p class="modal-section-content">${project.challenge}</p>
-    </div>
-
-    <div class="modal-section">
-      <h2 class="modal-section-title">Solution</h2>
-      <p class="modal-section-content">${project.solution}</p>
-    </div>
-
-    <div class="modal-section">
-      <h2 class="modal-section-title">Technologies Used</h2>
-      <div class="tech-list">${techHTML}</div>
-    </div>
-
-    <div class="modal-section">
-      <h2 class="modal-section-title">Key Features</h2>
-      <div class="modal-section-content">
-        <ul style="margin-left: 20px; line-height: 2;">
-          ${featuresHTML}
-        </ul>
-      </div>
-    </div>
-
-    <div class="modal-section">
-      <h2 class="modal-section-title">Performance Metrics</h2>
-      <p class="modal-section-content">${project.performance}</p>
-    </div>
-  `;
-
-        modal.style.display = "block";
-      }
-
-      function closeProjectModal() {
-        document.getElementById("projectModal").style.display = "none";
-      }
-
-      // Close modal when clicking outside
-      window.addEventListener("click", (event) => {
-        const modal = document.getElementById("projectModal");
-        if (event.target === modal) {
-          modal.style.display = "none";
-        }
-      });
-      /////////////////////
-
-      ///////////////////
-
-      function scrollToSection(sectionId) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }
-
-      // Detect scroll position and activate dark mode
-      window.addEventListener("scroll", () => {
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const securitySection = document.getElementById("security");
-
-        if (securitySection) {
-          const securityPosition = securitySection.offsetTop;
-
-          // Activate dark mode when reaching security section
-          if (
-            scrollPosition + windowHeight / 2 >= securityPosition &&
-            !darkModeActive
-          ) {
-            document.body.classList.add("dark-mode");
-            darkModeActive = true;
-          } else if (
-            scrollPosition + windowHeight / 2 < securityPosition &&
-            darkModeActive
-          ) {
-            document.body.classList.remove("dark-mode");
-            darkModeActive = false;
-          }
-        }
-
-        // Hide scroll indicator after first scroll
-        if (scrollPosition > 100) {
-          document.querySelector(".scroll-indicator").style.opacity = "0";
-        } else {
-          document.querySelector(".scroll-indicator").style.opacity = "1";
-        }
-      });
-
-      // Close modal when clicking outside
-      window.addEventListener("click", (event) => {
-        const modal = document.getElementById("projectModal");
-        if (event.target === modal) {
-          modal.style.display = "none";
-        }
-      });
-
-      // Smooth reveal animation for cards on scroll
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px",
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              entry.target.style.opacity = "1";
-              entry.target.style.transform = "translateY(0)";
-            }, index * 100);
-          }
-        });
-      }, observerOptions);
-
-      document
-        .querySelectorAll(
-          ".project-card, .stat-card, .vulnerability-item, .solution-card, .ctf-card, .skill-group"
-        )
-        .forEach((el) => {
-          el.style.opacity = "0";
-          el.style.transform = "translateY(30px)";
-          el.style.transition = "all 0.6s ease";
-          observer.observe(el);
-        });
-    </script>
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="main.js"></script>
+</body>
 </html>
