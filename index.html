@@ -182,17 +182,18 @@
       </div>
 
       <div class="cve-list">
-        <article class="cve-card" data-sev="medium" data-tilt>
+        <article class="cve-card" data-sev="critical" data-tilt>
           <div class="cve-top">
-            <span class="sev mono">MODERATE</span>
-            <a class="cve-id mono" href="https://github.com/advisories/GHSA-pw9m-5jxm-xr6h" target="_blank" rel="noopener" style="color:inherit">GHSA-pw9m-5jxm-xr6h ↗</a>
+            <span class="sev mono">CRITICAL · CVSS 9.1</span>
+            <a class="cve-id mono" href="https://github.com/advisories/GHSA-pw9m-5jxm-xr6h" target="_blank" rel="noopener" style="color:inherit">CVE-2026-53512 ↗</a>
           </div>
           <h3>better-auth — OAuth Refresh-Token Replay</h3>
           <p>The confidential client secret was never verified during the OAuth refresh-token
-             grant on the oidc-provider and MCP plugins (CWE-306), so a refresh token could be
-             replayed without client authentication. Reported in a 27K-star auth framework with
-             millions of npm downloads; upstream patch shipped. CVE-2026-53512 reserved.</p>
-          <div class="cve-tags mono"><span>CWE-306</span><span>OAuth 2.0</span><span>patch shipped</span></div>
+             grant on the oidc-provider and MCP plugins (CWE-306), so a leaked refresh token plus
+             the public client ID could be replayed to mint fresh access and refresh tokens
+             indefinitely. Reported in a 27K-star auth framework with millions of npm downloads;
+             published as CVE-2026-53512 (CVSS 9.1), fix shipped in 1.6.11.</p>
+          <div class="cve-tags mono"><span>CWE-306</span><span>OAuth 2.0</span><span>published CVE</span></div>
         </article>
 
         <article class="cve-card" data-sev="high" data-tilt>
